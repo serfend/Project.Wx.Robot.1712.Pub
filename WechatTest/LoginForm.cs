@@ -134,9 +134,11 @@ namespace WechatTest
             RunAsync(()=>{
                 wc.Run();
             });
-			var wxRobot = new WXRobot(wc);
-			wc.OnAddUser += wxRobot.Init;
-			wc.OnRecvMsg += wxRobot.MessageRecived;
+			//var wxRobot = new WXRobot(wc);
+			//wc.OnAddUser += wxRobot.Init;
+			//wc.OnRecvMsg += wxRobot.MessageRecived;
+			var WxSendAll = new WXSendMessageWithName() { WxServices = wc };
+			wc.OnRecvMsg += WxSendAll.MsgRecived;
         }
 
 

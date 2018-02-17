@@ -50,5 +50,9 @@ namespace Wechat.API
 			this.NickName = from.NickName;
 			this.RemarkName= from.RemarkName;
 		}
-    }
+		public override string ToString()
+		{
+			return this.NickName + ":" + this.RemarkName + "," + this.Alias;
+		}
+	}
 }

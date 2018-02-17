@@ -147,11 +147,11 @@ namespace Wechat
 			var initResult = mAPIService.Init(mPass_ticket, mBaseReq);
 			if (initResult != null && initResult.BaseResponse.ret == 0)
 			{
-				Self = CreateContact(initResult.User);
-				CurrentUser = new User(Self);
+				Self = initResult.User;
+				CurrentUser = Self;
 				mSyncKey = initResult.SyncKey;
 				// 开启系统通知
-				var statusNotifyRep = mAPIService.Statusnotify(Self.ID, Self.ID, mPass_ticket, mBaseReq);
+				var statusNotifyRep = mAPIService.Statusnotify(Self.UserName, Self.UserName, mPass_ticket, mBaseReq);
 				if (statusNotifyRep != null && statusNotifyRep.BaseResponse != null && statusNotifyRep.BaseResponse.ret == 0)
 				{
 					CurrentStatus = ClientStatusType.WeixinSync;
@@ -182,7 +182,7 @@ namespace Wechat
 
 		private bool InitContactAndGroups()
 		{
-			mContacts = new List<Contact>();
+			mContacts = new List<User>();
 			mGroups = new List<Group>();
 
 			var contactResult = mAPIService.GetContact(mPass_ticket, mBaseReq.Skey);
@@ -200,8 +200,8 @@ namespace Wechat
 				}
 				else
 				{
-					var contact = CreateContact(user);
-					mContacts.Add(contact);
+					
+					mContacts.Add(user);
 					OnAddUser?.Invoke(this, new AddUserEvent() { User=user});
 				}
 			}
@@ -274,7 +274,7 @@ namespace Wechat
 			}
 		}
 		#endregion
-		public Contact Self { get; private set; }
+		public User Self { get; private set; }
 
         public bool IsLogin { get; private set; }
 
@@ -299,14 +299,14 @@ namespace Wechat
                 }
             }
         }
-        private List<Contact> mContacts;
-        public Contact[] Contacts
+        private List<User> mContacts;
+        public User[] Contacts
         {
             get{
                 return mContacts.ToArray();
             }
             private set {
-                mContacts = new List<Contact>();
+                mContacts = new List<User>();
                 mContacts.AddRange(value);
             }
         }
@@ -329,13 +329,13 @@ namespace Wechat
                 return group.ID == ID;
             });
         }
-        public Contact GetContact(string ID)
+        public User GetContact(string ID)
         {
-            if (ID == Self.ID) return Self;
+            if (ID == Self.UserName) return Self;
             if (mContacts == null) return null;
-            return mContacts.FindLast((contact) =>
+            return mContacts.FindLast((user) =>
             {
-                return contact.ID == ID;
+                return user.UserName == ID;
             });
         }
 
@@ -482,7 +482,7 @@ namespace Wechat
         {
 			Msg msg = new Msg
 			{
-				FromUserName = Self.ID,
+				FromUserName = Self.UserName,
 				ToUserName = toUserName,
 				Content = content,
 				ClientMsgId = DateTime.Now.Millisecond,
@@ -525,14 +525,14 @@ namespace Wechat
             if (readCount != data.Length) return false;
 
             string mimetype = "image/" + imgFormat.ToString().ToLower();
-            var response = mAPIService.Uploadmedia(Self.ID, toUserName, "WU_FILE_" + upLoadMediaCount, mimetype, 2, 4, data, fileName, mPass_ticket, mBaseReq);
+            var response = mAPIService.Uploadmedia(Self.UserName, toUserName, "WU_FILE_" + upLoadMediaCount, mimetype, 2, 4, data, fileName, mPass_ticket, mBaseReq);
             if (response != null && response.BaseResponse != null && response.BaseResponse.ret == 0)
             {
                 upLoadMediaCount++;
                 string mediaId = response.MediaId;
 				ImgMsg msg = new ImgMsg
 				{
-					FromUserName = Self.ID,
+					FromUserName = Self.UserName,
 					ToUserName = toUserName,
 					MediaId = mediaId,
 					ClientMsgId = DateTime.Now.Millisecond,

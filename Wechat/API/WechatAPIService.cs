@@ -11,6 +11,7 @@ using System.Net.Http;
 using Wechat.tools;
 using System.Net;
 using System.Collections;
+using System.Threading.Tasks;
 
 namespace Wechat.API
 {
@@ -326,8 +327,22 @@ namespace Wechat.API
             var rep = JsonConvert.DeserializeObject<StatusnotifyResponse>(repJsonStr);//此处掉线时会报格式不正确
             return rep;
         }
-
-        public SendMsgResponse SendMsg(Msg msg, string pass_ticket,BaseRequest baseReq)
+		//public List<SendMsgResponse> SendMsgs(IEnumerable<Msg> msgs, string pass_ticket, BaseRequest baseReq)
+		//{
+		//	var results = new List<SendMsgResponse>();
+		//	Func<Msg, string, BaseRequest, SendMsgResponse> sendmsg = SendMsg;
+		//	foreach(var msg in msgs)
+		//	{
+		//		var task = new Task<SendMsgResponse>(sendmsg(msg, pass_ticket, baseReq));
+		//	}
+		//	Task.WaitAll();
+		//	return results;
+		//}
+		////private Func<SendMsgResponse> SendMsgAsyn(Msg msg,string pass_ticket,BaseRequest baseReq)
+		//{
+		//	return SendMsg;
+		//}
+		public SendMsgResponse SendMsg(Msg msg, string pass_ticket,BaseRequest baseReq)
         {
             string url = "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?sid={0}&r={1}&lang=zh_CN&pass_ticket={2}";
             url = string.Format(url, baseReq.Sid, GetR(), pass_ticket);
@@ -479,8 +494,9 @@ namespace Wechat.API
 				return ret;
 			}
 			}
-			catch
+			catch(Exception ex)
 			{
+				Console.WriteLine(ex.Message);
 				InitHttpClient();
 				return null;
 			}
