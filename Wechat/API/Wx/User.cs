@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,7 +53,16 @@ namespace Wechat.API
 		}
 		public override string ToString()
 		{
-			return this.NickName + ":" + this.RemarkName + "," + this.Alias;
+			var cstr = new StringBuilder();
+			Type t = this.GetType();
+			var infoList = t.GetFields();
+			foreach (var item in infoList)
+			{
+				string name = item.Name;
+				object value = item.GetValue(this);
+				cstr.Append(name).Append(":").Append(value.ToString()).Append("\n");
+			}
+			return cstr.ToString();
 		}
 	}
 }

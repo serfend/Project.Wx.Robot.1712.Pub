@@ -300,14 +300,13 @@ namespace Wechat
             }
         }
         private List<User> mContacts;
-        public User[] Contacts
+		public List<User> Contacts
         {
             get{
-                return mContacts.ToArray();
+                return mContacts;
             }
             private set {
-                mContacts = new List<User>();
-                mContacts.AddRange(value);
+                mContacts = new List<User>(value);
             }
         }
         private List<Group> mGroups;

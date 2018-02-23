@@ -127,7 +127,7 @@ namespace WechatTest
 				OnAddUser = (xxx, xx) => {
 					RunInMainthread(() => {
 						string nickName = ClearHtml(xx.User.NickName);
-						ComboBox_users.Items.Add(xx.User.NickName + "|" + xx.User.UserName);
+						ComboBox_users.Items.Add(xx.User.RemarkName+"(" + xx.User.NickName + ")" + xx.User.UserName);
 					});
 				}
 			};
@@ -199,7 +199,12 @@ namespace WechatTest
 
 		private void ComboBox_users_SelectedIndexChanged(object sender, EventArgs e)
 		{
-
+			if (sender is ComboBox box)
+			{
+				MessageBox.Show(wc.Contacts[box.SelectedIndex].ToString());
+				//MessageBox.Show(wc.Contacts[1]);
+			}
+				
 		}
 	}
 }
