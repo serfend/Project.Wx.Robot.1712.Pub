@@ -40,7 +40,13 @@ namespace WechatTest
 			if (e.Msg.FromUserName == xiaobinId)
 				SendMsgToUser(e);
 			else
+			{
+				if (e.Msg.FromUserName.Contains("@@")) {
+					//Console.WriteLine("");
+					return;
+				}//屏蔽群消息
 				SendMsgToXiaobin(e);
+			}
 		}
 
 		int noUserRemainExceptionCount = 5;

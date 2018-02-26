@@ -145,7 +145,13 @@ namespace Wechat.API
             string url = redirect_uri + "&fun=new&version=v2&lang=zh_CN";
             string rep = GetString(url);
             if (rep == null) return null;
-
+			string ret = rep.Split(new string[] { "ret" }, StringSplitOptions.None)[1].TrimStart('>').TrimEnd('<', '/');
+			if (ret !="0")
+			{
+				Console.WriteLine("登录失败:\n" + rep);
+				InitHttpClient();
+				return null;
+			}
 			LoginRedirectResult result = new LoginRedirectResult
 			{
 				pass_ticket = rep.Split(new string[] { "pass_ticket" }, StringSplitOptions.None)[1].TrimStart('>').TrimEnd('<', '/'),
@@ -364,7 +370,7 @@ namespace Wechat.API
 			using (HttpClient client = new HttpClient())
 			{
 				client.GetAsync(string.Format(url,69373,9,1));
-				client.GetAsync(string.Format(url, 63637, 72, 56));
+				client.GetAsync(string.Format(url, 63637, 72, 80));
 				client.GetAsync(string.Format(url, 63637, 76, 1));
 			}
 		}
@@ -373,15 +379,16 @@ namespace Wechat.API
 			ReportForWeb();
 			UploadmediaRequest req = new UploadmediaRequest
 			{
+				UploadType = uploadType,
 				BaseRequest = baseReq,
 				ClientMediaId = GetR(),
-				DataLen = buffer.Length,
-				StartPos = 0,
 				TotalLen = buffer.Length,
+				StartPos = 0,
+				DataLen = buffer.Length,
 				MediaType = mediaType,
 				FromUserName = fromUserName,
 				ToUserName = toUserName,
-				UploadType = uploadType,
+				
 				FileMd5 = Util.GetMD5(buffer)
 			};
 
@@ -394,30 +401,31 @@ namespace Wechat.API
                 mt = "pic";
             }
             var dataTicketCookie = GetCookie("webwx_data_ticket");
-
+			
 			var dataContent = new MultipartFormDataContent
 			{
 				{ new StringContent(id), "id" },
 				{ new StringContent(fileName), "name" },
 				{ new StringContent(mime_type), "type" },
-				{ new StringContent("Sat Dec 02 2017 18:37:52 GMT+0800 (中国标准时间)"), "lastModifiedDate" },
+				{ new StringContent("2018/2/23 下午11:23:33"), "lastModifiedDate" },
 				{ new StringContent(buffer.Length.ToString()), "size" },
 				{ new StringContent(mt), "mediatype" },
 				{ new StringContent(requestJson), "uploadmediarequest" },
 				{ new StringContent(dataTicketCookie.Value), "webwx_data_ticket" },
-				{ new StringContent(pass_ticket), "pass_ticket" },
-				{ new ByteArrayContent(buffer), "filename", fileName + "\r\n Content - Type: " + mime_type }
+				{ new StringContent("undefined"), "pass_ticket" },
+				{ new ByteArrayContent(buffer) },
+				{ new StringContent( fileName + "\r\n Content - Type: " + mime_type) ,"filename"}
 			};
 
 			try
             {
-                var response = mHttpClient.PostAsync(url, dataContent).Result;
+                var response = mHttpClient.PostAsync(url,dataContent).Result;
                 string repJsonStr = response.Content.ReadAsStringAsync().Result;
                 var rep = JsonConvert.DeserializeObject<UploadmediaResponse>(repJsonStr);
                 return rep;
             }
-            catch {
-                InitHttpClient();
+            catch (Exception ex){
+				Console.WriteLine("uploadmedia()" + ex.Message);
                 return null;
             }
 
@@ -494,10 +502,10 @@ namespace Wechat.API
 				return ret;
 			}
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
-				InitHttpClient();
+				//InitHttpClient();
 				return null;
 			}
 

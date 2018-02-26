@@ -125,6 +125,10 @@ namespace Wechat
 			{
 				// 登录成功
 				var redirectResult = mAPIService.LoginRedirect(loginResult.redirect_uri);
+				if (redirectResult == null) {
+					CurrentStatus = ClientStatusType.GetUUID;
+					return;
+				};
 				mBaseReq = new BaseRequest
 				{
 					Skey = redirectResult.skey,

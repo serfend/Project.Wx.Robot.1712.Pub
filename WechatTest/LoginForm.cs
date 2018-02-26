@@ -134,9 +134,9 @@ namespace WechatTest
             RunAsync(()=>{
                 wc.Run();
             });
-			//var wxRobot = new WXRobot(wc);
-			//wc.OnAddUser += wxRobot.Init;
-			//wc.OnRecvMsg += wxRobot.MessageRecived;
+			var wxRobot = new WXRobot(wc);
+			wc.OnAddUser += wxRobot.Init;
+			wc.OnRecvMsg += wxRobot.MessageRecived;
 			var WxSendAll = new WXSendMessageWithName() { WxServices = wc };
 			wc.OnRecvMsg += WxSendAll.MsgRecived;
         }
@@ -170,7 +170,7 @@ namespace WechatTest
             string str = ComboBox_users.Text;
             var args = str.Split('|');
             if (args.Length == 2) {
-                string userName = args[1];
+                string userName = args[0];
                 OpenFileDialog ofd = new OpenFileDialog();
                 if (ofd.ShowDialog() == DialogResult.OK) {
                     if (File.Exists(ofd.FileName)) {
