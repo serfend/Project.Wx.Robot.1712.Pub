@@ -24,7 +24,7 @@ namespace WechatTest
 			{
 				string toThisUserInfo = SciMsgInfo(info, user);
 				if (MessageBox.Show(user.ToString()+'\n'+ toThisUserInfo, "跳过", MessageBoxButtons.YesNo)==DialogResult.No){
-					this.WxServices.SendMsg(user.UserName, toThisUserInfo);
+					this.WxServices.SendMsg(user.UserName, toThisUserInfo, (x) => { });
 				}
 				
 			}

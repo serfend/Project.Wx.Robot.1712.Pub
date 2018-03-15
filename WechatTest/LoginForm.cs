@@ -134,11 +134,11 @@ namespace WechatTest
             RunAsync(()=>{
                 wc.Run();
             });
-			var wxRobot = new WXRobot(wc);
-			wc.OnAddUser += wxRobot.Init;
-			wc.OnRecvMsg += wxRobot.MessageRecived;
-			var WxSendAll = new WXSendMessageWithName() { WxServices = wc };
-			wc.OnRecvMsg += WxSendAll.MsgRecived;
+			//var wxRobot = new WXRobot(wc);
+			//wc.OnAddUser += wxRobot.Init;
+			//wc.OnRecvMsg += wxRobot.MessageRecived;
+			//var WxSendAll = new WXSendMessageWithName() { WxServices = wc };
+			//wc.OnRecvMsg += WxSendAll.MsgRecived;
         }
 
 
@@ -161,7 +161,9 @@ namespace WechatTest
             var args = str.Split('|');
             if (args.Length == 2) {
                 string userName = args[1];
-                wc.SendMsg(userName,TextBox_msg_text.Text);
+                wc.SendMsg(userName,TextBox_msg_text.Text,(ret)=> {
+					//success send
+				});
             }
         }
 
@@ -175,11 +177,10 @@ namespace WechatTest
                 if (ofd.ShowDialog() == DialogResult.OK) {
                     if (File.Exists(ofd.FileName)) {
 						Image img = Image.FromFile(ofd.FileName);
-                        if (wc.SendMsg(userName, img)) {
-                            Debug.WriteLine("图片消息发送成功!");
-                        } else {
-                            Debug.WriteLine("图片消息发送失败!");
-                        }
+						wc.SendMsg(userName, img, null, CallBack: (ret) => {
+							if (ret) Debug.WriteLine("图片消息发送成功!");
+							else Debug.WriteLine("图片消息发送失败!");
+						});
                     }
                 }
                 
@@ -192,8 +193,7 @@ namespace WechatTest
             var args = str.Split('|');
             if (args.Length == 2) {
                 string userName = args[1];
-                bool ret = wc.SetRemarkName(userName, "HelloSB");
-                MessageBox.Show("设置备注名：" + ret);
+                wc.SetRemarkName(userName, "2333",(ret) => { MessageBox.Show("设置备注名：" + ret); });
             }
         }
 

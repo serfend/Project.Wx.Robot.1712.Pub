@@ -64,15 +64,15 @@ namespace WechatTest
 			}
 			string user = lastUserName.Dequeue();
 			if(e.Msg.MsgType!=1)
-				wxServices.SendMsg(user, "[小冰自动回复]收到其他类型的消息" + e.Msg.MsgType);
+				wxServices.SendMsg(user, "[小冰自动回复]收到其他类型的消息" + e.Msg.MsgType,(x)=> { });
 			else
-				wxServices.SendMsg(user, "[小冰自动回复]" + e.Msg.Content);
+				wxServices.SendMsg(user, "[小冰自动回复]" + e.Msg.Content, (x) => { });
 		}
 		private void SendMsgToXiaobin(RecvMessageEvent e)
 		{
 			if (e.Msg.MsgType != 1) return;
 			lastUserName.Enqueue(e.Msg.FromUserName);
-			wxServices.SendMsg(xiaobinId, e.Msg.Content);
+			wxServices.SendMsg(xiaobinId, e.Msg.Content, (x) => { });
 		}
 		private void Log(string message)
 		{
