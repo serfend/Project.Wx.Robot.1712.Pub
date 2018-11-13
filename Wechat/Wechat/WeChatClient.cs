@@ -470,7 +470,7 @@ namespace Wechat
         private string mLoginSession;
         private void MainLoop()
         {
-			HttpItem.UsedFidder = true;
+			//HttpClient.UsedFidder = true;
             HandleStatus();
         }
 
